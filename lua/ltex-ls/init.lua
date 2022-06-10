@@ -11,13 +11,7 @@ local cache = require 'ltex-ls.cache'
 
 local default_config = {
   on_init = function(client)
-    -- Read false positives cache if present
-    local new_config = cache.read_cache(vim.fn.expand "%")
-    new_config = vim.tbl_deep_extend("keep", new_config, client.config.settings.ltex)
-
-    -- TODO: do more things in here
-
-    client.config.settings.ltex = new_config
+    client.config.settings.ltex = cache.merge_with(vim.fn.expand "%", client.config.settings.ltex)
     client.notify("workspace/didChangeConfiguration")
 
     -- A bunch of functions specific to the client

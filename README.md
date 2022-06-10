@@ -18,3 +18,4 @@ Enhanced integration of ltex-ls for neovim
     - [ ] Expose with `:LtexCheckDocument`
   - [ ] `_ltex.getServerStatus`
 - [ ] _Workspace_ configuration with `ltex/workspaceSpecificConfiguration`
+- [ ] Allow to clear the cache
