@@ -2,7 +2,29 @@
 
 Enhanced integration of ltex-ls for neovim
 
-# TODOs
+Features:
+- Working code-actions for:
+  - `Add to dictionnary`
+  - `Disable rule`
+  - `Hide false positive`
+- See TODO section for the planned work
+
+## Installation
+
+Install this plugin using your favorite package manager.
+Remember that this plugin requires using `nvim-lspconfig`.
+```lua
+
+use { 'vigoux/ltex-ls.nvim', requires = 'neovim/nvim-lspconfig' }
+```
+
+As this plugin is a wrapper around `lspconfig` here how to run it:
+```lua
+require'ltex-ls'.setup {
+  -- Put your lsp config here, just like with nvim-lspconfig
+}
+```
+## TODOs
 
 - [ ] Integrate `spelllang` inte `ltes.language`
 - [ ] Integrate `spellfile` into `ltex.dictionnary`
