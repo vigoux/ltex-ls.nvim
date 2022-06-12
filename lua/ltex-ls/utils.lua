@@ -1,4 +1,6 @@
-local M = {}
+local M = {
+  CONFIG_KEYS = { "dictionary", "disabledRules", "enabledRules", "hiddenFalsePositives" }
+}
 
 function M.read_dictionnary_file(path)
   local lines = {}

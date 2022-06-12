@@ -1,7 +1,7 @@
 local M = {}
 
 local CACHE_FNAME = ".ltex_ls_cache.json"
-local KEYS = { "dictionary", "disabledRules", "enabledRules", "hiddenFalsePositives" }
+local utils = require'ltex-ls.utils'
 
 --- Reads the cache associated with filepath
 function M.read_cache(filepath)
@@ -26,7 +26,7 @@ function M.update_cache(filepath, content)
   local cache_content, fpath = M.read_cache(filepath)
   fpath = fpath or vim.fn.fnamemodify(filepath, ":p:h") .. "/" .. CACHE_FNAME
 
-  for _, key in ipairs(KEYS) do
+  for _, key in ipairs(utils.CONFIG_KEYS) do
     if content[key] then
       if cache_content[key] then
         for lang, additions in pairs(content[key] or {}) do

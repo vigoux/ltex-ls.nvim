@@ -10,6 +10,11 @@ local handlers = require 'ltex-ls.handlers'
 local cache = require 'ltex-ls.cache'
 
 local default_config = {
+  init_options = {
+    customCapabilities = {
+      workspaceSpecificConfiguration = true
+    }
+  },
   on_init = function(client)
     client.config.settings.ltex = cache.merge_with(vim.fn.expand "%", client.config.settings.ltex)
     client.notify("workspace/didChangeConfiguration")
@@ -20,7 +25,8 @@ local default_config = {
     end
   end,
   handlers = {
-    ["workspace/executeCommand"] = handlers.workspace_command
+    ["workspace/executeCommand"] = handlers.workspace_command,
+    ["ltex/workspaceSpecificConfiguration"] = handlers.workspace_configuration
   },
   settings = {
     ltex = {
