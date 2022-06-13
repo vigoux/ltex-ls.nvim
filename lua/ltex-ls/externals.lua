@@ -30,7 +30,7 @@ function M.expand_config(cfg)
 end
 
 function M.filter(tbl)
-  return vim.tbl_filter(function(e) return vim.startswith(':', e) end, tbl)
+  return vim.tbl_filter(function(e) return vim.startswith(e, ':') end, tbl)
 end
 
 return M
