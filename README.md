@@ -26,7 +26,7 @@ require'ltex-ls'.setup {
 ```
 ## TODOs
 
-- [ ] Integrate `spelllang` inte `ltes.language`
+- [ ] Integrate `spelllang` into `ltex.language`
 - [ ] Integrate `spellfile` into `ltex.dictionnary`
   - [x] Add [external files](https://valentjn.github.io/ltex/vscode-ltex/setting-scopes-files.html#external-setting-files) support
 - [ ] Support custom commands
