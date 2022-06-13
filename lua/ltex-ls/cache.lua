@@ -12,13 +12,19 @@ function M.read_cache(filepath)
 
   if #paths == 0 then return {}, nil end
 
-  local cfile = io.open(paths[1], "r")
+  local p = paths[1]
+
+  local cfile = io.open(p, "r")
   if cfile then
-    local jvalue = vim.fn.json_decode(cfile:read("*a"))
-    cfile:close()
-    return jvalue, paths[1]
+    local success, jvalue = pcall(vim.json.decode, cfile:read("*a"))
+    if success then
+      cfile:close()
+      return jvalue, p
+    else
+      return {}, p
+    end
   else
-    return {}, paths[1]
+    return {}, p
   end
 end
 
@@ -44,7 +50,7 @@ function M.update_cache(filepath, content)
 
   local cfile = io.open(fpath, "w")
   if cfile then
-    cfile:write(vim.fn.json_encode(cache_content))
+    cfile:write(vim.json.encode(cache_content))
     cfile:close()
   else
     vim.notify(string.format("[ltex-ls.nvim] Could not write cache to %s", fpath), vim.log.levels.ERROR)
