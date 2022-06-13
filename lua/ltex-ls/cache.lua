@@ -5,12 +5,13 @@ local utils = require'ltex-ls.utils'
 
 --- Reads the cache associated with filepath
 function M.read_cache(filepath)
-  local start_path = vim.fn.fnamemodify(filepath, ":p:h")
+  filepath = vim.fs.normalize(filepath)
+  local start_path = vim.fs.dirname(filepath)
   local paths = vim.fs.find(CACHE_FNAME, {
     path = start_path, upward = true,
     stop = "/", type = "file" })
 
-  if #paths == 0 then return {}, nil end
+  if #paths == 0 then return {}, start_path .. '/' .. CACHE_FNAME end
 
   local p = paths[1]
 
@@ -30,7 +31,6 @@ end
 
 function M.update_cache(filepath, content)
   local cache_content, fpath = M.read_cache(filepath)
-  fpath = fpath or vim.fn.fnamemodify(filepath, ":p:h") .. "/" .. CACHE_FNAME
 
   for _, key in ipairs(utils.CONFIG_KEYS) do
     if content[key] then
