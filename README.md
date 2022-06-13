@@ -7,6 +7,7 @@ Features:
   - `Add to dictionnary`
   - `Disable rule`
   - `Hide false positive`
+- [External files](https://valentjn.github.io/ltex/vscode-ltex/setting-scopes-files.html#external-setting-files) support
 - See TODO section for the planned work
 
 ## Installation
@@ -28,7 +29,6 @@ require'ltex-ls'.setup {
 
 - [ ] Integrate `spelllang` into `ltex.language`
 - [ ] Integrate `spellfile` into `ltex.dictionnary`
-  - [x] Add [external files](https://valentjn.github.io/ltex/vscode-ltex/setting-scopes-files.html#external-setting-files) support
 - [ ] Support custom commands
   - [x] `_ltex.addToDictionary`
     - [ ] Expose `:LtexAddToDictionnary`
@@ -39,5 +39,6 @@ require'ltex-ls'.setup {
   - [x] `_ltex.checkDocument`
     - [x] Expose with `:LtexCheckDocument`
   - [ ] `_ltex.getServerStatus`
+    - [ ] Expose `:LtexServerStatus`
 - [x] _Workspace_ configuration with `ltex/workspaceSpecificConfiguration`
 - [ ] Allow to clear the cache
