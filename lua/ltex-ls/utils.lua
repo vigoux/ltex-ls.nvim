@@ -23,4 +23,8 @@ function M.check_config_key(key)
   return true
 end
 
+function M.get_ltex_client()
+  return (vim.lsp.get_active_clients { name = "ltex" })[1]
+end
+
 return M
