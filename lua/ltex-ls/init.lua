@@ -31,6 +31,10 @@ local default_config = {
     client.checkDocument = function(uri)
       client.request("workspace/executeCommand", { command = "_ltex.checkDocument", arguments = { { uri = uri } } })
     end
+
+    client.serverStatus = function(uri)
+      client.request("workspace/executeCommand", { command = "_ltex.getServerStatus", arguments = {} })
+    end
   end,
   handlers = {
     ["workspace/executeCommand"] = handlers.workspace_command,
@@ -38,13 +42,28 @@ local default_config = {
   },
 }
 
+local commands = {
+  CheckDocument = {
+    func = function(client, ...)
+      client.checkDocument(vim.uri_from_bufnr(vim.api.nvim_get_current_buf()))
+    end,
+    opts = { desc = "Checks the current buffer with LTeX" }
+  },
+  ServerStatus = {
+    func = function(client, ...)
+      client.serverStatus()
+    end,
+    opts = { desc = "Displays the server status in a floating window" }
+  }
+}
+
 
 --- Setup ltex-ls to integrate with neovim
 --- This assumes that config matches what lspconfig expects
 function M.setup(user_config)
-  vim.api.nvim_create_user_command("LtexCheckDocument", with_ltex(function(client, ...)
-    client.checkDocument(vim.uri_from_bufnr(vim.api.nvim_get_current_buf()))
-  end), { desc = "Checks the current buffer with LTeX" })
+  for name, spec in pairs(commands) do
+    vim.api.nvim_create_user_command("Ltex" .. name, with_ltex(spec.func), spec.opts)
+  end
 
   local new_tbl = vim.tbl_deep_extend("force", default_config, user_config)
   lspconfig.ltex.setup(new_tbl)

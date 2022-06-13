@@ -38,7 +38,7 @@ require'ltex-ls'.setup {
     - [ ] Expose `:LtexHideFalsePositive`
   - [x] `_ltex.checkDocument`
     - [x] Expose with `:LtexCheckDocument`
-  - [ ] `_ltex.getServerStatus`
-    - [ ] Expose `:LtexServerStatus`
+  - [x] `_ltex.getServerStatus`
+    - [x] Expose `:LtexServerStatus`
 - [x] _Workspace_ configuration with `ltex/workspaceSpecificConfiguration`
 - [ ] Allow to clear the cache
