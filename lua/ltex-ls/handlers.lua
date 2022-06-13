@@ -48,7 +48,6 @@ local function handle_option_update(client, key, updated_val, uri)
             end
           end
         end)
-
       else
         cache.update_cache(fpath, { [key] = { [lang] = value } })
       end
@@ -86,7 +85,6 @@ function M.workspace_configuration(err, result, ctx, config)
 
   local expanded = externals.expand_config(settings)
   expanded = cache.merge_with(vim.uri_to_fname(scope_uri), expanded)
-  vim.pretty_print(expanded)
   return expanded
 end
 
