@@ -24,9 +24,6 @@ local default_config = {
     }
   },
   on_init = function(client)
-    client.config.settings.ltex = cache.merge_with(vim.fn.expand "%", client.config.settings.ltex)
-    client.notify("workspace/didChangeConfiguration")
-
     -- A bunch of functions specific to the client
     client.checkDocument = function(uri)
       client.request("workspace/executeCommand", { command = "_ltex.checkDocument", arguments = { { uri = uri } } })
