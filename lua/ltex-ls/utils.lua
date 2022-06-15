@@ -27,4 +27,10 @@ function M.get_ltex_client()
   return (vim.lsp.get_active_clients { name = "ltex" })[1]
 end
 
+function M.append_file_to_langs(cfg, file)
+  for lang, value in pairs(cfg) do
+    table.insert(value, ":" .. file)
+  end
+end
+
 return M

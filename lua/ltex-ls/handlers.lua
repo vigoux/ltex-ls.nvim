@@ -3,6 +3,7 @@ local M = {}
 local cache = require 'ltex-ls.cache'
 local externals = require 'ltex-ls.externals'
 local utils = require 'ltex-ls.utils'
+local internal_config = require 'ltex-ls.config'
 
 local function handle_option_update(client, key, updated_val, uri)
   -- FIXME(vigoux): this does a lot of little write operations on the cache file, maybe have
@@ -124,8 +125,14 @@ function M.workspace_configuration(err, result, ctx, config)
   local client = vim.lsp.get_client_by_id(ctx.client_id)
   local settings = client.config.settings.ltex
 
+  if (internal_config.spellfile or "") ~= "" and settings.dictionary then
+    settings = vim.deepcopy(settings)
+    utils.append_file_to_langs(settings.dictionary, internal_config.spellfile)
+  end
+
   local expanded = externals.expand_config(settings)
   expanded = cache.merge_with(vim.uri_to_fname(scope_uri), expanded)
+
   return expanded
 end
 

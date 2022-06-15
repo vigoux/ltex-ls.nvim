@@ -8,6 +8,7 @@ end
 local utils = require 'ltex-ls.utils'
 local handlers = require 'ltex-ls.handlers'
 local cache = require 'ltex-ls.cache'
+local internal_config = require 'ltex-ls.config'
 
 local function with_ltex(func)
   return function(...)
@@ -61,6 +62,8 @@ function M.setup(user_config)
   for name, spec in pairs(commands) do
     vim.api.nvim_create_user_command("Ltex" .. name, with_ltex(spec.func), spec.opts)
   end
+
+  internal_config.use_spellfile = user_config.use_spellfile
 
   local new_tbl = vim.tbl_deep_extend("force", default_config, user_config)
   lspconfig.ltex.setup(new_tbl)
