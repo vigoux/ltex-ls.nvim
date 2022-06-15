@@ -63,6 +63,7 @@ function M.setup(user_config)
     vim.api.nvim_create_user_command("Ltex" .. name, with_ltex(spec.func), spec.opts)
   end
 
+  internal_config.log_level = user_config.log_level
   internal_config.use_spellfile = user_config.use_spellfile
 
   local new_tbl = vim.tbl_deep_extend("force", default_config, user_config)

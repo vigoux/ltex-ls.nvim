@@ -2,6 +2,8 @@ local M = {
   CONFIG_KEYS = { "dictionary", "disabledRules", "enabledRules", "hiddenFalsePositives" }
 }
 
+local internal_config = require 'ltex-ls.config'
+
 function M.read_dictionnary_file(path)
   local lines = {}
   for line in io.lines(path) do
@@ -12,7 +14,9 @@ function M.read_dictionnary_file(path)
 end
 
 function M.log(msg, level, opts)
-  vim.notify(string.format("[lext-ls.nvim]: %s", msg), level, opts or {})
+  if level >= internal_config.log_level then
+    vim.notify(string.format("[lext-ls.nvim]: %s", msg), level, opts or {})
+  end
 end
 
 function M.check_config_key(key)
