@@ -1,8 +1,10 @@
 # ltex-ls.nvim
 
-Enhanced integration of ltex-ls for neovim
+Enhanced integration of [`ltex-ls`](https://valentjn.github.io/ltex) for neovim.
 
 Features:
+- Integration with `nvim` options:
+  - `spellfile`
 - Working code-actions for:
   - `Add to dictionnary`
   - `Disable rule`
@@ -22,20 +24,18 @@ use { 'vigoux/ltex-ls.nvim', requires = 'neovim/nvim-lspconfig' }
 As this plugin is a wrapper around `lspconfig` here how to run it:
 ```lua
 require'ltex-ls'.setup {
+  use_spellfile = false, -- Uses the value of 'spellfile' as an external file when checking the document
   -- Put your lsp config here, just like with nvim-lspconfig
 }
 ```
 ## TODOs
 
 - [ ] Integrate `spelllang` into `ltex.language`
-- [ ] Integrate `spellfile` into `ltex.dictionnary`
-- [ ] Support custom commands
+- [x] Integrate `spellfile` into `ltex.dictionnary`
+- [x] Support custom commands
   - [x] `_ltex.addToDictionary`
-    - [ ] Expose `:LtexAddToDictionnary`
   - [x] `_ltex.disableRules`
-    - [ ] Expose `:LtexDisableRule`
   - [x] `_ltex.hideFalsePositives`
-    - [ ] Expose `:LtexHideFalsePositive`
   - [x] `_ltex.checkDocument`
     - [x] Expose with `:LtexCheckDocument`
   - [x] `_ltex.getServerStatus`
