@@ -8,8 +8,11 @@ local function expand_one(lst)
     new[lname] = {}
     for _, item in ipairs(value) do
       if item:sub(1, 1) == ':' then
-        for line in io.lines(item:sub(2)) do
-          table.insert(new[lname], line)
+        local ok, lines = pcall(io.lines, item:sub(2))
+        if ok then
+          for line in lines do
+            table.insert(new[lname], line)
+          end
         end
       else
         table.insert(new[lname], item)
