@@ -21,6 +21,8 @@ Remember that this plugin requires using `nvim-lspconfig`.
 use { 'vigoux/ltex-ls.nvim', requires = 'neovim/nvim-lspconfig' }
 ```
 
+## Usage
+
 As this plugin is a wrapper around `lspconfig` here how to run it:
 ```lua
 require'ltex-ls'.setup {
@@ -28,6 +30,15 @@ require'ltex-ls'.setup {
   -- Put your lsp config here, just like with nvim-lspconfig
 }
 ```
+
+The plugin exposes multiple commands to help to interact with the
+server:
+- `LtexCheckDocument`: checks the current buffer
+- `LtexClearCache`: using a simple ui, clears parts of or all the
+  local config
+- `LtexServerStatus`: very simple status report of the server, useful
+  for debugging
+
 For example (with my own config):
 ```lua
 require 'ltex-ls'.setup {
