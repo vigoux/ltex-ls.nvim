@@ -27,11 +27,12 @@ local default_config = {
   on_init = function(client)
     -- A bunch of functions specific to the client
     client.checkDocument = function(uri)
+      uri = uri or vim.uri_from_bufnr(vim.api.nvim_get_current_buf())
       client.request("workspace/executeCommand", { command = "_ltex.checkDocument", arguments = { { uri = uri } } })
     end
 
-    client.serverStatus = function(uri)
-      client.request("workspace/executeCommand", { command = "_ltex.getServerStatus", arguments = {} })
+    client.serverStatus = function(handler)
+      client.request("workspace/executeCommand", { command = "_ltex.getServerStatus", arguments = {} }, handler)
     end
   end,
   handlers = {
@@ -43,13 +44,58 @@ local default_config = {
 local commands = {
   CheckDocument = {
     func = function(client, ...)
-      client.checkDocument(vim.uri_from_bufnr(vim.api.nvim_get_current_buf()))
+      client.checkDocument()
     end,
     opts = { desc = "Checks the current buffer with LTeX" }
   },
   ServerStatus = {
     func = function(client, ...)
-      client.serverStatus()
+      local result = client.serverStatus(function(err, result, ctx)
+        if err then
+          utils.log(vim.inspect(err), vim.log.levels.ERROR)
+          return
+        end
+        local tmpbuf = vim.api.nvim_create_buf(true, true)
+        vim.api.nvim_buf_set_option(tmpbuf, "bufhidden", "delete")
+        vim.api.nvim_buf_set_lines(tmpbuf, 0, -1, false, {
+          "LTeX Server Status",
+          string.format("PID: %d", result.processId),
+          string.format("Wall-clock duration: %d s", result.wallClockDuration),
+          string.format("CPU duration: %d s", result.cpuDuration),
+          string.format("CPU usage: %d %%", result.cpuUsage * 100),
+          string.format("Used memory: %d B", result.usedMemory),
+          string.format("JVM memory: %d B", result.totalMemory),
+        })
+        if result.isChecking then
+          vim.api.nvim_buf_set_lines(tmpbuf, -1, -1, false, {
+            string.format("Currently checking: %s", result.documentUriBeingChecked)
+          })
+        end
+
+        local winwidth = vim.api.nvim_win_get_width(0)
+        local winheight = vim.api.nvim_win_get_height(0)
+
+        local newwidth = math.floor(winwidth * 0.8)
+        local newheight = math.floor(winheight * 0.8)
+
+        local x = (winwidth - newwidth) / 2
+        local y = (winheight - newheight) / 2
+        local win = vim.api.nvim_open_win(tmpbuf, true, {
+          relative = "editor",
+          width = newwidth,
+          height = newheight,
+          focusable = true,
+          style = "minimal",
+          border = "rounded",
+          noautocmd = true,
+          row = y,
+          col = x
+        })
+
+        vim.api.nvim_buf_set_keymap(tmpbuf, "n", "q", "", { silent = true, noremap = true, callback = function()
+          vim.api.nvim_win_hide(win)
+        end })
+      end)
     end,
     opts = { desc = "Displays the server status in a floating window" }
   }
