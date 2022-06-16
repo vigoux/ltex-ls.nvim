@@ -15,7 +15,7 @@ local function handle_option_update(client, key, updated_val, uri)
 
   if not ltex_settings then
     -- Just push to the cache
-    cache.update_cache(fpath, { [key] = updated_val })
+    cache.update(fpath, { [key] = updated_val })
     return
   end
 
@@ -38,7 +38,7 @@ local function handle_option_update(client, key, updated_val, uri)
             return
           elseif index == #external_files then
             -- The user asked to write into the cache
-            cache.update_cache(fpath, { [key] = { [lang] = value } })
+            cache.update(fpath, { [key] = { [lang] = value } })
           else
             local destfile = io.open(item, "a")
             if destfile then
@@ -50,10 +50,10 @@ local function handle_option_update(client, key, updated_val, uri)
           end
         end)
       else
-        cache.update_cache(fpath, { [key] = { [lang] = value } })
+        cache.update(fpath, { [key] = { [lang] = value } })
       end
     else
-      cache.update_cache(fpath, { [key] = { [lang] = value } })
+      cache.update(fpath, { [key] = { [lang] = value } })
     end
   end
   client.checkDocument(uri)

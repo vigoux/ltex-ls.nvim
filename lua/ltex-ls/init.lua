@@ -18,6 +18,10 @@ local function with_ltex(func)
   end
 end
 
+local function curbuf_uri()
+  return vim.uri_from_bufnr(vim.api.nvim_get_current_buf())
+end
+
 local default_config = {
   init_options = {
     customCapabilities = {
@@ -27,7 +31,7 @@ local default_config = {
   on_init = function(client)
     -- A bunch of functions specific to the client
     client.checkDocument = function(uri)
-      uri = uri or vim.uri_from_bufnr(vim.api.nvim_get_current_buf())
+      uri = uri or curbuf_uri()
       client.request("workspace/executeCommand", { command = "_ltex.checkDocument", arguments = { { uri = uri } } })
     end
 
@@ -47,6 +51,25 @@ local commands = {
       client.checkDocument()
     end,
     opts = { desc = "Checks the current buffer with LTeX" }
+  },
+  ClearCache = {
+    func = function(client)
+      local path = vim.fn.expand "%"
+      vim.ui.select(vim.list_extend(vim.deepcopy(utils.CONFIG_KEYS), { "all" }), {
+        prompt = "Which key do you want to clear:",
+        kind = "string"
+      }, function(item)
+        if not item then
+          return
+        elseif item == "all" then
+          cache.clear(path)
+        else
+          cache.clear(path, item)
+        end
+        client.checkDocument()
+      end)
+    end,
+    opts = { desc = "Deletes parts of or all of the cache" }
   },
   ServerStatus = {
     func = function(client, ...)
