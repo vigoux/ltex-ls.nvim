@@ -47,7 +47,7 @@ local default_config = {
 
 local commands = {
   CheckDocument = {
-    func = function(client, ...)
+    func = function(client)
       client.checkDocument()
     end,
     opts = { desc = "Checks the current buffer with LTeX" }
@@ -72,8 +72,8 @@ local commands = {
     opts = { desc = "Deletes parts of or all of the cache" }
   },
   ServerStatus = {
-    func = function(client, ...)
-      local result = client.serverStatus(function(err, result, ctx)
+    func = function(client)
+      client.serverStatus(function(err, result)
         if err then
           utils.log(vim.inspect(err), vim.log.levels.ERROR)
           return
