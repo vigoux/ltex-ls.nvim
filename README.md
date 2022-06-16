@@ -88,4 +88,4 @@ require 'ltex-ls'.setup {
   - [x] `_ltex.getServerStatus`
     - [x] Expose `:LtexServerStatus`
 - [x] _Workspace_ configuration with `ltex/workspaceSpecificConfiguration`
-- [ ] Allow to clear the cache
+- [x] Allow to clear the cache
