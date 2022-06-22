@@ -42,7 +42,7 @@ local function handle_option_update(client, key, updated_val, uri)
           else
             local destfile = io.open(item, "a")
             if destfile then
-              destfile:write("\n" .. table.concat(value, "\n"))
+              destfile:write(table.concat(value, "\n") .. "\n")
               destfile:close()
             else
               utils.log("Can't write to " .. item, vim.log.levels.ERROR)
