@@ -56,7 +56,6 @@ local function handle_option_update(client, key, updated_val, uri)
       cache.update(fpath, { [key] = { [lang] = value } })
     end
   end
-  client.checkDocument(uri)
 end
 
 function M.workspace_command(err, result, ctx, config)
@@ -76,6 +75,11 @@ function M.workspace_command(err, result, ctx, config)
   end
 
   vim.lsp.handlers[ctx.method](err, result, ctx, config)
+
+  -- Always recheck the current uri if defined.
+  if arg.uri then
+    client.checkDocument(arg.uri)
+  end
 end
 
 function M.workspace_configuration(err, result, ctx, config)
