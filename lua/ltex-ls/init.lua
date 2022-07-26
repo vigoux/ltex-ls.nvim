@@ -43,6 +43,7 @@ local default_config = {
       workspaceSpecificConfiguration = true
     }
   },
+  filetypes = { "tex", "markdown", "text" },
   on_init = function(client)
     -- A bunch of functions specific to the client
     client.checkDocument = function(uri)
