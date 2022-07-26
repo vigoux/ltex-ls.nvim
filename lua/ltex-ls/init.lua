@@ -1,8 +1,23 @@
 local M = {}
 
 local ok, lspconfig = pcall(require, 'lspconfig')
-if not ok then
-  error "ltex-ls.nvim requires 'nvim-lspconfig' to be installed"
+local setup
+if ok then
+  setup = lspconfig.ltex.setup
+else
+  local augroup = vim.api.nvim_create_augroup("LTeX_NVIM", {})
+  setup = function(config)
+    local cfg = vim.deepcopy(config)
+    cfg.name = "ltex"
+    cfg.cmd = { "ltex-ls" }
+    vim.api.nvim_create_autocmd("Filetype", {
+      pattern = config.filetypes,
+      group = augroup,
+      callback = function()
+        vim.lsp.start(cfg)
+      end
+    })
+  end
 end
 
 local utils = require 'ltex-ls.utils'
@@ -136,7 +151,7 @@ function M.setup(user_config)
   internal_config.use_spellfile = user_config.use_spellfile
 
   local new_tbl = vim.tbl_deep_extend("force", default_config, user_config)
-  lspconfig.ltex.setup(new_tbl)
+  setup(new_tbl)
 end
 
 return M

@@ -18,6 +18,10 @@ Install this plugin using your favorite package manager.
 Remember that this plugin requires using `nvim-lspconfig`.
 ```lua
 
+-- ltex-ls works without nvim-lspconfig
+use { 'vigoux/ltex-ls.nvim' }
+
+-- If you want to use nvim-lspconfig
 use { 'vigoux/ltex-ls.nvim', requires = 'neovim/nvim-lspconfig' }
 ```
 
