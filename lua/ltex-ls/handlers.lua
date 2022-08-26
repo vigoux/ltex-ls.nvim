@@ -83,7 +83,7 @@ function M.workspace_command(err, result, ctx, config)
 
   -- Always recheck the current uri if defined.
   if did_update then
-    vim.notify("Options updated, rechecking document", vim.log.levels.INFO, { title = "ltex-ls" })
+    vim.notify("Options updated, rechecking document", vim.log.levels.DEBUG, { title = "ltex-ls" })
     client.checkDocument(arg.uri)
   end
 end
