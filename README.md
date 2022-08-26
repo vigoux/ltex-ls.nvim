@@ -25,6 +25,9 @@ use { 'vigoux/ltex-ls.nvim' }
 use { 'vigoux/ltex-ls.nvim', requires = 'neovim/nvim-lspconfig' }
 ```
 
+Note the the same feature set is provided with and without
+`lspconfig`, so I'd advise not specifying this dependency.
+
 ## Usage
 
 As this plugin is a wrapper around `lspconfig` here how to run it:
