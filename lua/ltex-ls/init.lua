@@ -47,8 +47,7 @@ local default_config = {
   on_init = function(client)
     -- A bunch of functions specific to the client
     client.checkDocument = function(uri)
-      uri = uri or curbuf_uri()
-      client.request("workspace/executeCommand", { command = "_ltex.checkDocument", arguments = { { uri = uri } } })
+      client.request("workspace/executeCommand", { command = "_ltex.checkDocument", arguments = { { uri = uri or curbuf_uri() } } })
     end
 
     client.serverStatus = function(handler)
