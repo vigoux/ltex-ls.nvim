@@ -64,20 +64,26 @@ function M.workspace_command(err, result, ctx, config)
     error "LTeX command handler invalid usage"
   end
 
+  local did_update = false
+
   local command_name = ctx.params.command
   local arg = ctx.params.arguments[1]
   if command_name == "_ltex.addToDictionary" then
     handle_option_update(client, "dictionary",  arg.words, arg.uri)
+    did_update = true
   elseif command_name == "_ltex.hideFalsePositives" then
     handle_option_update(client, "hiddenFalsePositives", arg.falsePositives, arg.uri)
+    did_update = true
   elseif command_name == "_ltex.disableRules" then
     handle_option_update(client, "disabledRules", arg.ruleIds, arg.uri)
+    did_update = true
   end
 
   vim.lsp.handlers[ctx.method](err, result, ctx, config)
 
   -- Always recheck the current uri if defined.
-  if arg.uri then
+  if did_update then
+    vim.notify("Options updated, rechecking document", vim.log.levels.INFO, { title = "ltex-ls" })
     client.checkDocument(arg.uri)
   end
 end
