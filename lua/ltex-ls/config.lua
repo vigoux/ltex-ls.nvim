@@ -1,6 +1,7 @@
 local M = {
   log_level = vim.log.levels.ERROR,
   use_spellfile = false,
+  window_border = "single",
 }
 
 local function cfg_index(cfg, key)

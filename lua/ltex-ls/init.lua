@@ -124,7 +124,7 @@ local commands = {
           height = newheight,
           focusable = true,
           style = "minimal",
-          border = "rounded",
+          border = internal_config.window_border,
           noautocmd = true,
           row = y,
           col = x
@@ -136,6 +136,30 @@ local commands = {
       end)
     end,
     opts = { desc = "Displays the server status in a floating window" }
+  },
+  DisableHere = {
+    opts = {
+      desc = "Insert magic comments to disable LTeX at this range (defaults to current line).",
+      nargs = 0,
+      range = true,
+    },
+    func = function(_, args)
+      local buf = vim.api.nvim_get_current_buf()
+      local commentstring = vim.api.nvim_buf_get_option(buf, "commentstring")
+
+      -- FIXME(vigoux): there must be a better way to handle that case... But the the default
+      --                commentstring for latex.
+      if commentstring == "%%s" then
+        commentstring = "%% %s"
+      end
+
+      vim.api.nvim_buf_set_lines(buf, args.line1 - 1, args.line1 - 1, true, {
+        string.format(commentstring, "LTeX: enabled=false")
+      })
+      vim.api.nvim_buf_set_lines(buf, args.line2 + 1, args.line2 + 1, true, {
+        string.format(commentstring, "LTeX: enabled=true")
+      })
+    end
   }
 }
 
@@ -147,8 +171,7 @@ function M.setup(user_config)
     vim.api.nvim_create_user_command("Ltex" .. name, with_ltex(spec.func), spec.opts)
   end
 
-  internal_config.log_level = user_config.log_level
-  internal_config.use_spellfile = user_config.use_spellfile
+  vim.tbl_extend("force", internal_config, user_config)
 
   local new_tbl = vim.tbl_deep_extend("force", default_config, user_config)
   setup(new_tbl)

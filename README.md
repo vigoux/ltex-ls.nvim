@@ -31,6 +31,7 @@ As this plugin is a wrapper around `lspconfig` here how to run it:
 ```lua
 require'ltex-ls'.setup {
   use_spellfile = false, -- Uses the value of 'spellfile' as an external file when checking the document
+  window_border = 'single', -- How the border should be rendered
   -- Put your lsp config here, just like with nvim-lspconfig
 }
 ```
@@ -40,6 +41,7 @@ server:
 - `LtexCheckDocument`: checks the current buffer
 - `LtexClearCache`: using a simple ui, clears parts of or all the
   local config
+- `[range]LtexDisableHere`: disables ltex for this range of text.
 - `LtexServerStatus`: very simple status report of the server, useful
   for debugging
 
