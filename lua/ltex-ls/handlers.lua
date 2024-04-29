@@ -10,17 +10,16 @@ local internal_config = require 'ltex-ls.config'
 ---@param key string The key of the config to update
 ---@param arg any Arguments used to update
 ---@param uri string URI of the current file
-function M.handle_option_update(client, key, updated_val, uri)
+function M.handle_option_update(client, key, updated_val)
   -- FIXME(vigoux): this does a lot of little write operations on the cache file, maybe have
   --                something to delay cache write ?
   if not utils.check_config_key(key) then return end
 
   local ltex_settings = client.config.settings.ltex[key]
-  local fpath = vim.uri_to_fname(uri)
 
   if not ltex_settings then
     -- Just push to the cache
-    cache.update(fpath, { [key] = updated_val })
+    cache.update(client, { [key] = updated_val })
     return
   end
 
@@ -43,7 +42,7 @@ function M.handle_option_update(client, key, updated_val, uri)
             return
           elseif index == #external_files then
             -- The user asked to write into the cache
-            cache.update(fpath, { [key] = { [lang] = value } })
+            cache.update(client, { [key] = { [lang] = value } })
           else
             local destfile = io.open(item, "a")
             if destfile then
@@ -55,45 +54,15 @@ function M.handle_option_update(client, key, updated_val, uri)
           end
         end)
       else
-        cache.update(fpath, { [key] = { [lang] = value } })
+        cache.update(client, { [key] = { [lang] = value } })
       end
     else
-      cache.update(fpath, { [key] = { [lang] = value } })
+      cache.update(client, { [key] = { [lang] = value } })
     end
   end
 end
---
--- function M.workspace_command(err, result, ctx, config)
---   local client = vim.lsp.get_client_by_id(ctx.client_id)
---   if ctx.method ~= "workspace/executeCommand" or client.name ~= "ltex" then
---     error "LTeX command handler invalid usage"
---   end
---
---   local did_update = false
---
---   if command_name == "_ltex.addToDictionary" then
---     handle_option_update(client, "dictionary",  arg.words, arg.uri)
---     did_update = true
---   elseif command_name == "_ltex.hideFalsePositives" then
---     handle_option_update(client, "hiddenFalsePositives", arg.falsePositives, arg.uri)
---     did_update = true
---   elseif command_name == "_ltex.disableRules" then
---     handle_option_update(client, "disabledRules", arg.ruleIds, arg.uri)
---     did_update = true
---   end
---
---   vim.lsp.handlers[ctx.method](err, result, ctx, config)
---
---   -- Always recheck the current uri if defined.
---   if did_update then
---     vim.notify("Options updated, rechecking document", vim.log.levels.DEBUG, { title = "ltex-ls" })
---     client.checkDocument(arg.uri)
---   end
--- end
 
 function M.workspace_configuration(err, result, ctx, config)
-  local scope_uri = result.items[1].scopeUri
-
   local client = vim.lsp.get_client_by_id(ctx.client_id)
   local settings = client.config.settings.ltex
 
@@ -103,7 +72,7 @@ function M.workspace_configuration(err, result, ctx, config)
   end
 
   local expanded = externals.expand_config(settings)
-  expanded = cache.merge_with(vim.uri_to_fname(scope_uri), expanded)
+  expanded = cache.merge_with(client, expanded)
 
   return expanded
 end

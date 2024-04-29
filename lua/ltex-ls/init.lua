@@ -73,13 +73,13 @@ local default_config = {
   end,
   commands = {
     ["_ltex.addToDictionnary"] = mk_command_handler(function(cmd, args, client)
-      handlers.handle_option_update(client, "dictionary", args.words, args.uri)
+      handlers.handle_option_update(client, "dictionary", args.words)
     end),
     ["_ltex.hideFalsePositives"] = mk_command_handler(function(cmd, args, client)
-      handlers.handle_option_update(client, "hiddenFalsePositives", args.falsePositives, args.uri)
+      handlers.handle_option_update(client, "hiddenFalsePositives", args.falsePositives)
     end),
     ["_ltex.disableRules"] = mk_command_handler(function(cmd, args, client)
-      handlers.handle_option_update(client, "disabledRules", args.ruleIds, args.uri)
+      handlers.handle_option_update(client, "disabledRules", args.ruleIds)
     end)
   },
   handlers = {
