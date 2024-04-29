@@ -39,6 +39,22 @@ local function curbuf_uri()
   return vim.uri_from_bufnr(vim.api.nvim_get_current_buf())
 end
 
+--- Wraps a function to be used as an LSP client-side command
+---@param func fun(cmd: string, args: any[], client: vim.lsp.Client)
+---@return  fun(cmd: any, ctx: any)
+local function mk_command_handler(func)
+  return function(cmd, ctx)
+    local args = cmd.arguments[1]
+
+    local client = vim.lsp.get_client_by_id(ctx.client_id)
+    if client == nil then error("Undefined client ?") end
+
+    func(cmd.command, args, client)
+
+    client.request("workspace/executeCommand", { command = "_ltex.checkDocument", arguments = { { uri = args.uri or curbuf_uri() } } })
+  end
+end
+
 local default_config = {
   init_options = {
     customCapabilities = {
@@ -49,15 +65,24 @@ local default_config = {
   on_init = function(client)
     -- A bunch of functions specific to the client
     client.checkDocument = function(uri)
-      client.request("workspace/executeCommand", { command = "_ltex.checkDocument", arguments = { { uri = uri or curbuf_uri() } } })
     end
 
     client.serverStatus = function(handler)
       client.request("workspace/executeCommand", { command = "_ltex.getServerStatus", arguments = {} }, handler)
     end
   end,
+  commands = {
+    ["_ltex.addToDictionnary"] = mk_command_handler(function(cmd, args, client)
+      handlers.handle_option_update(client, "dictionary", args.words, args.uri)
+    end),
+    ["_ltex.hideFalsePositives"] = mk_command_handler(function(cmd, args, client)
+      handlers.handle_option_update(client, "hiddenFalsePositives", args.falsePositives, args.uri)
+    end),
+    ["_ltex.disableRules"] = mk_command_handler(function(cmd, args, client)
+      handlers.handle_option_update(client, "disabledRules", args.ruleIds, args.uri)
+    end)
+  },
   handlers = {
-    ["workspace/executeCommand"] = handlers.workspace_command,
     ["ltex/workspaceSpecificConfiguration"] = handlers.workspace_configuration
   },
 }
@@ -96,7 +121,7 @@ local commands = {
           return
         end
         local tmpbuf = vim.api.nvim_create_buf(true, true)
-        vim.api.nvim_buf_set_option(tmpbuf, "bufhidden", "delete")
+        vim.api.nvim_set_option_value("bufhidden", "delete", {buf = tmpbuf})
         vim.api.nvim_buf_set_lines(tmpbuf, 0, -1, false, {
           "LTeX Server Status",
           string.format("PID: %d", result.processId),
@@ -147,7 +172,7 @@ local commands = {
     },
     func = function(_, args)
       local buf = vim.api.nvim_get_current_buf()
-      local commentstring = vim.api.nvim_buf_get_option(buf, "commentstring")
+      local commentstring = vim.api.nvim_get_option_value("commentstring", {buf=buf})
 
       -- FIXME(vigoux): there must be a better way to handle that case... But the the default
       --                commentstring for latex.
