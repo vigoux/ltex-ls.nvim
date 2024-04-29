@@ -1,6 +1,6 @@
 local M = {}
 
-local CACHE_FNAME = ".ltex_ls_cache.json"
+M.CACHE_FNAME = ".ltex_ls_cache.json"
 local utils = require'ltex-ls.utils'
 
 local function write_cache(destination, content)
@@ -17,7 +17,7 @@ end
 ---@param client vim.lsp.Client
 ---@return string path The path to the cache
 local function get_cache_path(client)
-  return vim.fs.joinpath(client.root_dir, CACHE_FNAME)
+  return vim.fs.joinpath(client.root_dir, M.CACHE_FNAME)
 end
 
 --- Reads the cache associated with filepath

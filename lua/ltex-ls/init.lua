@@ -104,9 +104,9 @@ local commands = {
         if not item then
           return
         elseif item == "all" then
-          cache.clear(path)
+          cache.clear(client)
         else
-          cache.clear(path, item)
+          cache.clear(client, item)
         end
         client.checkDocument()
       end)
