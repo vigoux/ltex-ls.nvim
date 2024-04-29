@@ -1,5 +1,10 @@
 local M = {}
 
+local utils = require 'ltex-ls.utils'
+local handlers = require 'ltex-ls.handlers'
+local cache = require 'ltex-ls.cache'
+local internal_config = require 'ltex-ls.config'
+
 local ok, lspconfig = pcall(require, 'lspconfig')
 local setup
 if ok then
@@ -14,16 +19,13 @@ else
       pattern = config.filetypes,
       group = augroup,
       callback = function()
-        vim.lsp.start(cfg)
+        local newcfg = vim.deepcopy(cfg)
+        newcfg.root_dir = vim.fs.dirname(vim.fs.find({'.git', cache.CACHE_FNAME}, { upward = true })[1])
+        vim.lsp.start(newcfg)
       end
     })
   end
 end
-
-local utils = require 'ltex-ls.utils'
-local handlers = require 'ltex-ls.handlers'
-local cache = require 'ltex-ls.cache'
-local internal_config = require 'ltex-ls.config'
 
 local function with_ltex(func)
   return function(...)
