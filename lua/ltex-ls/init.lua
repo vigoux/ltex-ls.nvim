@@ -20,7 +20,7 @@ else
       group = augroup,
       callback = function()
         local newcfg = vim.deepcopy(cfg)
-        newcfg.root_dir = vim.fs.dirname(vim.fs.find({'.git', cache.CACHE_FNAME}, { upward = true })[1])
+        newcfg.root_dir = vim.fs.dirname(vim.fs.find({cache.CACHE_FNAME, ".latexmkrc", '.git'}, { upward = true })[1])
         vim.lsp.start(newcfg)
       end
     })
