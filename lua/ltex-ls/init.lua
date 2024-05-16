@@ -43,7 +43,7 @@ end
 ---@param func fun(cmd: string, args: any[], client: vim.lsp.Client)
 ---@return  fun(cmd: any, ctx: any)
 local function mk_command_handler(func)
-  return function(cmd, ctx)
+  return {function(cmd, ctx)
     local args = cmd.arguments[1]
 
     local client = vim.lsp.get_client_by_id(ctx.client_id)
@@ -52,7 +52,7 @@ local function mk_command_handler(func)
     func(cmd.command, args, client)
 
     client.request("workspace/executeCommand", { command = "_ltex.checkDocument", arguments = { { uri = args.uri or curbuf_uri() } } })
-  end
+  end}
 end
 
 local default_config = {
