@@ -17,7 +17,10 @@ end
 ---@param client vim.lsp.Client
 ---@return string path The path to the cache
 local function get_cache_path(client)
-  return vim.fs.joinpath(client.root_dir, M.CACHE_FNAME)
+  return M.joinpath(client.config.root_dir, M.CACHE_FNAME)
+end
+function M.joinpath(...)
+  return (table.concat({ ... }, '/'):gsub('//+', '/'))
 end
 
 --- Reads the cache associated with filepath
