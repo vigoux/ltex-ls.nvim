@@ -71,17 +71,6 @@ local default_config = {
       client.request("workspace/executeCommand", { command = "_ltex.getServerStatus", arguments = {} }, handler)
     end
   end,
-  commands = {
-    ["_ltex.addToDictionnary"] = mk_command_handler(function(cmd, args, client)
-      handlers.handle_option_update(client, "dictionary", args.words)
-    end),
-    ["_ltex.hideFalsePositives"] = mk_command_handler(function(cmd, args, client)
-      handlers.handle_option_update(client, "hiddenFalsePositives", args.falsePositives)
-    end),
-    ["_ltex.disableRules"] = mk_command_handler(function(cmd, args, client)
-      handlers.handle_option_update(client, "disabledRules", args.ruleIds)
-    end)
-  },
   handlers = {
     ["ltex/workspaceSpecificConfiguration"] = handlers.workspace_configuration
   },
@@ -194,6 +183,16 @@ local commands = {
 --- Setup ltex-ls to integrate with neovim
 --- This assumes that config matches what lspconfig expects
 function M.setup(user_config)
+  vim.lsp.commands["_ltex.addToDictionnary"] = mk_command_handler(function(cmd, args, client)
+    handlers.handle_option_update(client, "dictionary", args.words)
+  end)
+  vim.lsp.commands["_ltex.hideFalsePositives"] = mk_command_handler(function(cmd, args, client)
+    handlers.handle_option_update(client, "hiddenFalsePositives", args.falsePositives)
+  end)
+  vim.lsp.commands["_ltex.disableRules"] = mk_command_handler(function(cmd, args, client)
+    handlers.handle_option_update(client, "disabledRules", args.ruleIds)
+  end)
+
   for name, spec in pairs(commands) do
     vim.api.nvim_create_user_command("Ltex" .. name, with_ltex(spec.func), spec.opts)
   end
