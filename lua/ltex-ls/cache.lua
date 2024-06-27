@@ -17,19 +17,30 @@ end
 ---@param client vim.lsp.Client
 ---@return string path The path to the cache
 local function get_cache_path(client)
-  return vim.fs.joinpath(client.root_dir, M.CACHE_FNAME)
+  if client.config.root_dir then
+    return M.joinpath(client.config.root_dir, M.CACHE_FNAME)
+  else 
+    return nil
+  end
+end
+function M.joinpath(...)
+  return (table.concat({ ... }, '/'):gsub('//+', '/'))
 end
 
 --- Reads the cache associated with filepath
 function M.read(client)
   local p = get_cache_path(client)
 
-  local cfile = io.open(p, "r")
-  if cfile then
-    local success, jvalue = pcall(vim.json.decode, cfile:read("*a"))
-    if success then
-      cfile:close()
-      return jvalue, p
+  if p then
+    local cfile = io.open(p, "r")
+    if cfile then
+      local success, jvalue = pcall(vim.json.decode, cfile:read("*a"))
+      if success then
+        cfile:close()
+        return jvalue, p
+      else
+        return {}, p
+      end
     else
       return {}, p
     end
