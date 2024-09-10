@@ -1,8 +1,5 @@
 local M = {}
 
-local utils = require 'ltex-ls.utils'
-local handlers = require 'ltex-ls.handlers'
-local cache = require 'ltex-ls.cache'
 local internal_config = require 'ltex-ls.config'
 
 local ok, lspconfig = pcall(require, 'lspconfig')
@@ -20,7 +17,7 @@ else
       group = augroup,
       callback = function()
         local newcfg = vim.deepcopy(cfg)
-        newcfg.root_dir = vim.fs.dirname(vim.fs.find({cache.CACHE_FNAME, ".latexmkrc", '.git'}, { upward = true })[1])
+        newcfg.root_dir = vim.fs.dirname(vim.fs.find({require'ltex-ls.cache'.CACHE_FNAME, ".latexmkrc", '.git'}, { upward = true })[1])
         vim.lsp.start(newcfg)
       end
     })
@@ -29,7 +26,7 @@ end
 
 local function with_ltex(func)
   return function(...)
-    local client = utils.get_ltex_client()
+    local client = require'ltex-ls.utils'.get_ltex_client()
     if not client then return end
     func(client, ...)
   end
@@ -72,7 +69,9 @@ local default_config = {
     end
   end,
   handlers = {
-    ["ltex/workspaceSpecificConfiguration"] = handlers.workspace_configuration
+    ["ltex/workspaceSpecificConfiguration"] = function(...)
+      return require'ltex-ls.handlers'.workspace_configuration(...)
+    end
   },
 }
 
@@ -86,16 +85,16 @@ local commands = {
   ClearCache = {
     func = function(client)
       local path = vim.fn.expand "%"
-      vim.ui.select(vim.list_extend(vim.deepcopy(utils.CONFIG_KEYS), { "all" }), {
+      vim.ui.select(vim.list_extend(vim.deepcopy(require'ltex-ls.utils'.CONFIG_KEYS), { "all" }), {
         prompt = "Which key do you want to clear:",
         kind = "string"
       }, function(item)
         if not item then
           return
         elseif item == "all" then
-          cache.clear(client)
+          require'ltex-ls.cache'.clear(client)
         else
-          cache.clear(client, item)
+          require'ltex-ls.cache'.clear(client, item)
         end
         client.checkDocument()
       end)
@@ -106,7 +105,7 @@ local commands = {
     func = function(client)
       client.serverStatus(function(err, result)
         if err then
-          utils.log(vim.inspect(err), vim.log.levels.ERROR)
+          require'ltex-ls.utils'.log(vim.inspect(err), vim.log.levels.ERROR)
           return
         end
         local tmpbuf = vim.api.nvim_create_buf(true, true)
@@ -184,13 +183,13 @@ local commands = {
 --- This assumes that config matches what lspconfig expects
 function M.setup(user_config)
   vim.lsp.commands["_ltex.addToDictionnary"] = mk_command_handler(function(cmd, args, client)
-    handlers.handle_option_update(client, "dictionary", args.words)
+    require'ltex-ls.handlers'.handle_option_update(client, "dictionary", args.words)
   end)
   vim.lsp.commands["_ltex.hideFalsePositives"] = mk_command_handler(function(cmd, args, client)
-    handlers.handle_option_update(client, "hiddenFalsePositives", args.falsePositives)
+    require'ltex-ls.handlers'.handle_option_update(client, "hiddenFalsePositives", args.falsePositives)
   end)
   vim.lsp.commands["_ltex.disableRules"] = mk_command_handler(function(cmd, args, client)
-    handlers.handle_option_update(client, "disabledRules", args.ruleIds)
+    require'ltex-ls.handlers'.handle_option_update(client, "disabledRules", args.ruleIds)
   end)
 
   for name, spec in pairs(commands) do
