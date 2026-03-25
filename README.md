@@ -30,7 +30,7 @@ Note the the same feature set is provided with and without
 
 ## Usage
 
-As this plugin is a wrapper around `lspconfig` here how to run it:
+As this plugin is a wrapper around `lspconfig` here's how to run it:
 ```lua
 require'ltex-ls'.setup {
   use_spellfile = false, -- Uses the value of 'spellfile' as an external file when checking the document
